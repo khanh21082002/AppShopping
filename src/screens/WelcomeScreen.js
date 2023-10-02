@@ -4,7 +4,7 @@ import { images, icons, fontSizes, colors } from "../theme";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { UIButton } from '../component';
 
-function WelcomeScreen() {
+function WelcomeScreen(props) {
     //state => khi ma thay doi thi UI chay lai
 
     const [accountTypes, setAccountTypes] = useState([
@@ -21,6 +21,12 @@ function WelcomeScreen() {
             isSelected: false
         }
     ]);
+
+    //navigation
+    const { navigation, route } = props
+    //function of navigate to/back
+    const { navigate, goBack } = navigation
+
 
     return (
         <View style={{ backgroundColor: 'white', flex: 100 }}>
@@ -97,6 +103,7 @@ function WelcomeScreen() {
                     {/* Button */}
                     {accountTypes.map(accountType =>
                         <UIButton
+                            key={accountType.name}
                             onPress={() => {
                                 setAccountTypes(accountTypes.map(item => {
                                     return {
@@ -118,6 +125,9 @@ function WelcomeScreen() {
 
                 }}>
                     <UIButton
+                        onPress={() => {
+                            navigate('Login')
+                        }}
                         title={"Login".toLocaleUpperCase()}
                     />
                     <Text style={{
@@ -127,9 +137,13 @@ function WelcomeScreen() {
                     }}>
                         Want to create an account?
                     </Text>
-                    <TouchableOpacity style={{
-                        margin:10
-                    }}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            navigate('Register')
+                        }}
+                        style={{
+                            margin: 10
+                        }}>
                         <Text style={{
                             color: colors.primary,
                             fontSize: fontSizes.h5,

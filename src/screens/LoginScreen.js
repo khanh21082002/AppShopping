@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { UIButton } from '../component';
 import { isValidationEmail, isValiatePassword } from "../utilies/Validation";
 
-function LoginScreen() {
+function LoginScreen(props) {
     const [keyboardIsShow, setKeyboardIsShow] = useState(false);
     //states for validating
     const [errorEmail, setErrorEmail] = useState('');
@@ -25,6 +25,10 @@ function LoginScreen() {
             setKeyboardIsShow(false);
         });
     })
+
+    const { navigation, route } = props
+    //function of navigate to/back
+    const { navigate, goBack } = navigation
 
     return (
         <KeyboardAvoidingView
@@ -116,9 +120,9 @@ function LoginScreen() {
                 flex: 15
             }}>
                 <TouchableOpacity
-                    disabled = {!isValidationOk()}
+                    disabled={!isValidationOk()}
                     onPress={() => {
-                        Alert.alert(`Email: ${email}`, `Password: ${password}`)
+                        navigate('UITab')
                     }}
                     style={{
                         backgroundColor: isValidationOk() ? colors.primary : colors.disabled,
@@ -134,10 +138,14 @@ function LoginScreen() {
                         color: 'white',
                     }}>Login</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{
-                    padding: 5,
-                    alignSelf: 'center',
-                }}>
+                <TouchableOpacity
+                    onPress={()=> {
+                        navigate('Register')
+                    }}
+                    style={{
+                        padding: 5,
+                        alignSelf: 'center',
+                    }}>
                     <Text style={{
                         padding: 10,
                         fontSize: fontSizes.h5,
