@@ -10,4 +10,6 @@ export default{
     cloingSoon:'rgb(236, 69, 90)',
     messenger : 'rgba(0, 255, 0, 0.1)',
     repley: '#33FFFF',
+    white : '#fff',
+    grey: '#EEEEEE'
 }

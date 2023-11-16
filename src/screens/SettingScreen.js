@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {useRecoilState} from "recoil";
 import { Image, ImageBackground, Text, View, TouchableOpacity, Alert, Touchable, ScrollView, Switch } from "react-native";
 import { images, icons, fontSizes, colors } from "../theme";
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -10,10 +11,13 @@ import {
     firebaseDatabaseSet
 } from "../firebase/firebase"
 
+import {backgroundColorState} from "./../recoid/index"
+
 function SettingScreen(porps) {
     const [isEnabledLockApp, setIsEnabledLockApp] = useState(true);
     const [isUseFingerPrint, setIsUseFingerPrint] = useState(true);
     const [isEnabledChangePassword, setIsEnabledChangePassword] = useState(true);
+    const [backgroundColor, setBackgroundColor] = useRecoilState(backgroundColorState);
 
     const { navigation, route } = porps
     //function of navigate to/back
@@ -122,7 +126,7 @@ function SettingScreen(porps) {
                     color: "black",
                     fontSize: fontSizes.h3,
                     marginStart: 10
-                }}>Lock app in background</Text>
+                }}>Settings background</Text>
                 <View style={{ flex: 1 }} />
                 <Switch
                     trackColor={{ false: '#767577', true: colors.primary }}

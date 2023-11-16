@@ -222,17 +222,17 @@ const Add_FriendsComponent = ({ users, setUsers, friendShips, setFriendships }) 
 const List_FriendComponent = ({ users, setUsers, navigation, friendShips }) => {
 
     const friendshipStatus = (myUserId, friendShips) => {
-        if (!friendShips) {
+        if (!Array.isArray(friendShips)) {
             return "pending";
         }
-
+    
         const friendship = friendShips.find((friendship) => {
             return (
                 (friendship.userSender === myUserId && friendship.status === "friend") ||
                 (friendship.userReceiver === myUserId && friendship.status === "friend")
             );
         });
-
+    
         return friendship ? "friend" : "pending";
     };
 

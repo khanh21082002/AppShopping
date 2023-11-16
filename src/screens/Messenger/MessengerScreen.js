@@ -41,18 +41,12 @@ function MessengerScreen(props) {
     const [isHidden, setIsHidden] = useState(false);
 
     useEffect(() => {
-
-
         onValue(firebaseDatabaseRef(firebaseDatabase, 'messages'), async snapshot => {
             if (snapshot.exists()) {
-
-
                 let snapshotObject = snapshot.val();
                 let stringUser = await AsyncStorage.getItem('user');
                 let myUserId = JSON.parse(stringUser).uid;
                 let myFriendUserId = props.route.params.users.userId;
-
-
                 let updatedChatHistory = Object.keys(snapshotObject).filter(item => item.includes(myUserId) && item.includes(myFriendUserId))
                     .map(eachKey => {
                         let eachObject = snapshotObject[eachKey]
@@ -66,7 +60,6 @@ function MessengerScreen(props) {
                     .sort((item1, item2) => {
                         return item1.timetamp - item2.timetamp
                     })
-
                 for (let i = 0; i < updatedChatHistory.length; i++) {
                     let item = updatedChatHistory[i];
 
@@ -183,7 +176,7 @@ function MessengerScreen(props) {
 
                     let newMessengerObject = {
                         //fake
-                        url: 'https://randomuser.me/api/portraits/men/80.jpg',
+                        url: 'https://randomuser.me/api/portraits/men/70.jpg',
                         showUrl: false,
                         messenger: typedText,
                         timetamp: newKeyMessenger,

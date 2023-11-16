@@ -23,56 +23,69 @@ function ChatScreens(props) {
     const [chatToHide, setChatToHide] = useState(null);
     const [isDelete, setIsDelete] = useState(false);
     const [chatUsers, setChatUsers] = useState([]);
+    const [chatHistory, setChatHistory] = useState([]);
+    const [lastMessages, setLastMessages] = useState('');
+    const [searchText, setSearchText] = useState('');
 
+    const fillterList = (text) => chatUsers.filter(eachUsers => eachUsers.name.toLowerCase().includes(searchText.toLowerCase()))
     useEffect(() => {
         async function fetchData() {
             const stringUser = await AsyncStorage.getItem('user');
             const myUserId = JSON.parse(stringUser).uid;
-
-            onValue(firebaseDatabaseRef(firebaseDatabase, 'chat'), chatSnapshot => {
-
+    
+            onValue(firebaseDatabaseRef(firebaseDatabase, 'chat'), async (chatSnapshot) => {
                 if (chatSnapshot.exists()) {
                     const chatData = chatSnapshot.val();
                     const chatUsersArray = [];
-
+    
                     for (const chatKey in chatData) {
-                        if (chatKey.includes(myUserId)) { 
+                        if (chatKey.includes(myUserId)) {
                             const chatInfo = chatData[chatKey];
                             const chatKeyParts = chatKey.split('-');
-                            const otherUserId = chatKeyParts.filter(userId => userId !== myUserId)[0];
-
-
-                           
+                            const otherUserId = chatKeyParts.find(userId => userId !== myUserId);
+    
                             if (!chatInfo.isHidden) {
-                                onValue(firebaseDatabaseRef(firebaseDatabase, `users/${otherUserId}`), userSnapshot => {
-                                    
-                                    if (userSnapshot.exists()) {
-                                        const userObject = userSnapshot.val();
-                                        chatUsersArray.push({
-                                            url: 'https://randomuser.me/api/portraits/men/80.jpg',
-                                            name: userObject.email,
-                                            email: userObject.email,
-                                            accessToken: userObject.accessToken,
-                                            numberUnreadMessages: 0,
-                                            userId: otherUserId,
-                                        });
-                                    }
-                                    
-                                });
+                                // Lấy thông tin người dùng từ cơ sở dữ liệu
+                                const userSnapshot = await get(child(firebaseDatabaseRef(firebaseDatabase, 'users'), otherUserId));
+                                if (userSnapshot.exists()) {
+                                    const userObject = userSnapshot.val();
+                                    chatUsersArray.push({
+                                        url: 'https://randomuser.me/api/portraits/men/60.jpg',
+                                        name: userObject.email,
+                                        email: userObject.email,
+                                        accessToken: userObject.accessToken,
+                                        numberUnreadMessages: 0,
+                                        userId: otherUserId,
+                                    });
+                                }
+                                
+                               
                             }
+                           
+                           
+                            // Lấy tin nhắn cuối cùng từ cơ sở dữ liệu
+                            // onValue(child(firebaseDatabaseRef(firebaseDatabase, 'messages')), async (messageSnapshot) => {
+                            //     if (messageSnapshot.exists()) {
+                            //         let snapshotObject =await messageSnapshot.val();
+                            //         let messages = Object.keys(snapshotObject)
+                            //             .map(eachKey => snapshotObject[eachKey])
+                            //             .sort((item1, item2) => item1.timetamp - item2.timetamp);
+
+                            //         // Kiểm tra xem có tin nhắn hay không trước khi gán giá trị
+                            //         //setLastMessages(messages.length > 0 ? messages[messages.length - 1] : null);
+                            //     }
+                            // });
                             
-
                         }
-                    }
-
+                    }   
                     setChatUsers(chatUsersArray);
                 }
-
             });
         }
+    
         fetchData();
-    }, []);
-
+    }, [isDelete]);
+    
 
     const { navigation, route } = props
     const { navigate, goBack } = navigation
@@ -108,32 +121,39 @@ function ChatScreens(props) {
                 }}
             />
 
-            <View style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginStart: 10,
-                marginTop: 15
-            }}>
-                <Text style={{
-                    color: 'black',
-                    fontSize: fontSizes.h5,
-                    paddingStart: 10
-                }}> 6 unread message </Text>
-                <Icon
-                    name={"search"}
-                    size={20} color="black"
-                    style={{ marginRight: 15 }}
-                    onPress={() => {
-                        alert('hello')
-                    }}
+
+            <View style={{ height: 60, flexDirection: 'row' }}>
+                <Icon name="search"
+                    size={18}
+                    color='black'
+                    style={{ position: 'absolute', marginHorizontal: 10, justifyContent: 'center', alignSelf: 'center', marginLeft: 20 }}
                 />
+                <TextInput
+                    autoCorrect={false}
+                    placeholder="Search"
+                    onChangeText={text =>
+                        setSearchText(text)
+                    }
+                    style={{
+                        backgroundColor: colors.grey,
+                        marginHorizontal: 10,
+                        height: 40,
+                        marginVertical: 10,
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: 5,
+                        paddingStart: 39,
+                        opacity: 0.8,
+
+
+                    }} />
+
             </View>
 
-            <FlatList
-
+            {fillterList().length > 0 ? <FlatList
                 style={{ flex: 1 }}
-                data={chatUsers}
+                data={fillterList()}
                 renderItem={({ item }) => (
                     <ChatItem
                         onPress={() => {
@@ -162,10 +182,18 @@ function ChatScreens(props) {
                             )
                         }}
                         user={item}
+                        lastMessage={lastMessages}
+
                         key={item.name}
                     />
                 )}
-            />
+            /> : <View style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}>
+                <Text style={{ color: 'black', fontSize: fontSizes.h2 }}>Not found</Text>
+            </View>}
         </View>
     );
 }

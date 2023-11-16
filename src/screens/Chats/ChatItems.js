@@ -17,18 +17,18 @@ import { UIButton } from '../../component';
 function ChatItems(props) {
     let { name,
         url,
-        message,
-        numberUnreadMessages, 
-        key,        
+        lastMessage,
+        numberUnreadMessages,
+        key,
     } = props.user
-    const { onPress , onLongPress } = props
+    const { onPress, onLongPress } = props
 
     return <View style={{
-       backgroundColor: 'white',
-       margin: 5,
-       borderRadius: 5,
-       height: 80,
-       justifyContent: 'center',
+        backgroundColor: 'white',
+        margin: 5,
+        borderRadius: 5,
+        height: 80,
+        justifyContent: 'center',
     }}>
         <TouchableOpacity
             onPress={onPress}
@@ -42,7 +42,7 @@ function ChatItems(props) {
                 marginTop: 10,
 
             }}>
-                <View>
+                <View >
                     <Image
                         style={{
                             width: 50,
@@ -84,23 +84,30 @@ function ChatItems(props) {
                 }}>
                     <View style={{
                         flexDirection: 'column',
+                        marginBottom: 30,
+
+
                     }}>
+
                         <Text style={{
                             color: 'black',
                             fontSize: fontSizes.h5,
                             fontWeight: 'bold'
                         }}>{name}</Text>
+
                         <Text style={{
                             color: 'black',
-                            fontSize: fontSizes.h6,
-                        }}>{message}</Text>
+                            fontSize: fontSizes.h5,
+                        }}>{lastMessage}</Text>
                     </View>
-                    <Text style={{
-                        color: colors.disabled,
-                        fontSize: fontSizes.h6,
-                        marginRight: 8
+                    <View style={{ marginBottom: 30 }}>
+                        <Text style={{
+                            color: colors.disabled,
+                            fontSize: fontSizes.h6,
+                            marginRight: 8
 
-                    }}> 5 minutes agos</Text>
+                        }}> 5 minutes agos</Text>
+                    </View>
 
                 </View>
 
