@@ -9,7 +9,8 @@ function UIHeader(props) {
         leftIcon = '',
         rightIcon = '',
         onPressLeft,
-        onPressRight } = props
+        onPressRight ,
+        data } = props
     return <View style={{
         height: 70,
         backgroundColor: colors.primary,
@@ -25,10 +26,11 @@ function UIHeader(props) {
             color: 'white',
             fontSize: fontSizes.h1
         }}>{title}</Text>
-        <TouchableOpacity onPress={onPressLeft}>
-            <Icon name={rightIcon} size={20} color="white" style={{ marginRight: 15 }} />
+        <TouchableOpacity onPress={onPressRight}>
+            <Icon name={rightIcon} size={20} color="white" style={{ marginRight: 15 }} />           
         </TouchableOpacity>
     </View>
 }
 
 export default UIHeader
+

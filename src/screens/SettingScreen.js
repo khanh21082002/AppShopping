@@ -3,6 +3,12 @@ import { Image, ImageBackground, Text, View, TouchableOpacity, Alert, Touchable,
 import { images, icons, fontSizes, colors } from "../theme";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { UIHeader, UIRemove } from "../component/index"
+import {
+    auth , 
+    firebaseDatabase , 
+    firebaseDatabaseRef , 
+    firebaseDatabaseSet
+} from "../firebase/firebase"
 
 function SettingScreen(porps) {
     const [isEnabledLockApp, setIsEnabledLockApp] = useState(true);
@@ -73,6 +79,7 @@ function SettingScreen(porps) {
                 title="Sign out"
                 nameIcon2="chevron-right"
                 onPress={() => {
+                    auth.signOut()
                     Alert.alert('Sign Out', 'Comfirm sign out?', [
                         {
                             text: 'Cancel',

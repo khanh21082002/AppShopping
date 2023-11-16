@@ -1,8 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, ImageBackground, Text, View, TouchableOpacity, Alert, Touchable } from "react-native";
 import { images, icons, fontSizes, colors } from "../theme";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { UIButton } from '../component';
+import {
+    auth,
+    onAuthStateChanged,
+    firebaseDatabaseRef,
+    firebaseDatabaseSet,
+    firebaseDatabase
+} from '../firebase/firebase'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function WelcomeScreen(props) {
     //state => khi ma thay doi thi UI chay lai
@@ -27,6 +35,27 @@ function WelcomeScreen(props) {
     //function of navigate to/back
     const { navigate, goBack } = navigation
 
+    useEffect(() => {
+        onAuthStateChanged(auth, (ResponseUser) => {
+            if (ResponseUser) {                
+                
+                //save data to firebase
+                 let user ={
+                    userId: ResponseUser.uid,  
+                    email: ResponseUser.email,
+                    emailVerified: ResponseUser.emailVerified,
+                    accessToken: ResponseUser.accessToken
+                }
+
+                firebaseDatabaseSet(firebaseDatabaseRef(
+                    firebaseDatabase, `users/${ResponseUser.uid}`
+                    ), user)  
+                //save user to local storage 
+                AsyncStorage.setItem('user', JSON.stringify(ResponseUser))           
+                navigate('UITab')
+            } 
+        })
+    })
 
     return (
         <View style={{ backgroundColor: 'white', flex: 100 }}>

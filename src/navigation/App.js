@@ -1,5 +1,6 @@
 import React from "react";
 import { Welcome , Login , Register , Messenger } from '../screens'
+import Friends from "../screens/Friends/FriendScreen";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import UITab from "./UITab"
@@ -16,6 +17,7 @@ function App(props){
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="UITab" component={UITab} />
             <Stack.Screen name="Messenger" component={Messenger} />
+            <Stack.Screen name="Friends" component={Friends} />
         </Stack.Navigator>
     </NavigationContainer>
 }

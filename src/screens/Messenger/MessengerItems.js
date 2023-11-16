@@ -18,11 +18,13 @@ const screenHeight = Dimensions.get('window').height;
 
 
 function MessengerItems(props) {
-    const { onPress } = props
-    const { url, isSender, timetamp, messenger } = props.item
+    const { onPress , onDelete } = props
+    const { url, isSender, timetamp, messenger, showUrl } = props.item
+    
 
     return (isSender == true ? <TouchableOpacity
         onPress={onPress}
+        onDelete={onDelete}        
         style={{
             paddingStart: 10,
             flexDirection: 'row',
@@ -31,7 +33,7 @@ function MessengerItems(props) {
             alignItems: 'center'
 
         }}>
-        <Image
+        {showUrl == true ? <Image
             style={{
                 width: 50,
                 height: 50,
@@ -43,7 +45,12 @@ function MessengerItems(props) {
             source={{
                 uri: url
             }}
-        />
+        /> : <View style={{
+            width: 50,
+            height: 50,
+            marginRight: 15,
+            marginStart: 10
+        }}></View>}
         <View style={{
             flex: 1,
             flexDirection: 'row',
@@ -90,7 +97,7 @@ function MessengerItems(props) {
         </View>
 
 
-        <Image
+        {showUrl == true ? <Image
             style={{
                 width: 50,
                 height: 50,
@@ -102,7 +109,12 @@ function MessengerItems(props) {
             source={{
                 uri: url
             }}
-        />
+        /> : <View style={{
+            width: 50,
+            height: 50,
+            marginRight: 15,
+            marginStart: 10
+        }}></View>}
 
     </TouchableOpacity>)
 

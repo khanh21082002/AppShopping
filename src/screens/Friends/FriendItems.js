@@ -14,14 +14,11 @@ import { UIButton } from '../../component';
 
 // }
 
-function ChatItems(props) {
+function FriendItems(props) {
     let { name,
         url,
-        message,
-        numberUnreadMessages, 
-        key,        
     } = props.user
-    const { onPress , onLongPress } = props
+    const { onPress } = props
 
     return <View style={{
        backgroundColor: 'white',
@@ -32,7 +29,6 @@ function ChatItems(props) {
     }}>
         <TouchableOpacity
             onPress={onPress}
-            onLongPress={onLongPress}
         >
             <View style={{
                 height: 100,
@@ -42,7 +38,7 @@ function ChatItems(props) {
                 marginTop: 10,
 
             }}>
-                <View>
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
                     <Image
                         style={{
                             width: 50,
@@ -56,23 +52,6 @@ function ChatItems(props) {
                             uri: url
                         }}
                     />
-                    {numberUnreadMessages > 0 && <Text style={{
-                        backgroundColor: 'red',
-                        position: 'absolute',
-                        right: 5,
-                        height: 20,
-                        width: 20,
-                        borderRadius: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        paddingHorizontal: numberUnreadMessages > 9 ? 2 : 4,
-                        fontSize: fontSizes.h6,
-                        color: 'white',
-
-                    }}>
-
-                        {numberUnreadMessages}
-                    </Text>}
                 </View>
 
                 <View style={{
@@ -80,7 +59,6 @@ function ChatItems(props) {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-
                 }}>
                     <View style={{
                         flexDirection: 'column',
@@ -90,17 +68,9 @@ function ChatItems(props) {
                             fontSize: fontSizes.h5,
                             fontWeight: 'bold'
                         }}>{name}</Text>
-                        <Text style={{
-                            color: 'black',
-                            fontSize: fontSizes.h6,
-                        }}>{message}</Text>
+                       
                     </View>
-                    <Text style={{
-                        color: colors.disabled,
-                        fontSize: fontSizes.h6,
-                        marginRight: 8
-
-                    }}> 5 minutes agos</Text>
+                    
 
                 </View>
 
@@ -109,4 +79,4 @@ function ChatItems(props) {
     </View>
 
 }
-export default ChatItems
+export default FriendItems

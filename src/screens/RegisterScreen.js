@@ -5,17 +5,31 @@ import { images, icons, fontSizes, colors } from "../theme";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { UIButton } from '../component';
 import { isValidationEmail, isValiatePassword } from "../utilies/Validation";
+import {
+    auth,
+    firebaseDatabase,
+    createUserWithEmailAndPassword,
+    firebaseDatabaseRef,
+    firebaseDatabaseSet,
+    sendEmailVerification
+} from "../firebase/firebase"
 
-function RegisterScreen() {
+function RegisterScreen(props) {
     const [keyboardIsShow, setKeyboardIsShow] = useState(false);
     //states for validating
     const [errorEmail, setErrorEmail] = useState('');
     const [errorPassword, setErrorPassword] = useState('');
     //states to store email/password
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const isValidationOk = () => email.length > 0 && password.length > 0
-        && isValidationEmail(email) == true && isValiatePassword(password) == true
+    const [email, setEmail] = useState('alex@gmail.com');
+    const [password, setPassword] = useState('123456abc');
+    const [displayName, setDisplayName] = useState('Nguyen Van A');
+    const [retypepassword, setRetypePassword] = useState('123456abc');
+    const isValidationOk = () =>
+        email.length > 0 &&
+        password.length > 0 &&
+        isValidationEmail(email) == true &&
+        isValiatePassword(password) == true &&
+        password == retypepassword
 
     useEffect(() => {
         Keyboard.addListener('keyboardDidShow', () => {
@@ -24,7 +38,13 @@ function RegisterScreen() {
         Keyboard.addListener('keyboardDidHide', () => {
             setKeyboardIsShow(false);
         });
+        const xx = auth
     })
+
+    const { navigation, route } = props
+    //function of navigate to/back
+    const { navigate, goBack } = navigation
+
 
     return (
         <KeyboardAvoidingView
@@ -39,7 +59,7 @@ function RegisterScreen() {
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
-                flex: 25
+                flex: 20
 
             }}>
                 <Text style={{
@@ -65,13 +85,13 @@ function RegisterScreen() {
             <View style={{
                 flex: 55,
                 backgroundColor: 'white',
-                borderRadius:20,
+                borderRadius: 20,
                 padding: 10,
-                margin:10
+                margin: 10
             }}>
                 {/*Email */}
                 <View style={{
-                    marginHorizontal: 20,                   
+                    marginHorizontal: 20,
                 }}>
                     <Text style={{
                         color: colors.primary,
@@ -86,6 +106,7 @@ function RegisterScreen() {
                             color: 'black',
                         }}
                         placeholder="example@gmail.com"
+                        value={email}
                         placeholderTextColor={colors.placehoder}
                     />
                     <View style={{ height: 1, backgroundColor: colors.primary, marginBottom: 15 }} />
@@ -112,6 +133,7 @@ function RegisterScreen() {
                         }}
                         secureTextEntry={true}
                         placeholder="Enter Password"
+                        value={password}
                         placeholderTextColor={colors.placehoder}
                     />
                     <View style={{ height: 1, backgroundColor: colors.primary }} />
@@ -130,28 +152,74 @@ function RegisterScreen() {
                     <TextInput
                         onChangeText={(text) => {
                             setErrorPassword(isValiatePassword(text) == true ? '' : 'Invalid Password')
-                            setPassword(text)
+                            setRetypePassword(text)
                         }}
                         style={{
                             color: 'black',
                         }}
                         secureTextEntry={true}
                         placeholder="Re-Enter Password"
+                        value={retypepassword}
                         placeholderTextColor={colors.placehoder}
                     />
                     <View style={{ height: 1, backgroundColor: colors.primary }} />
                     <Text style={{ color: 'red', fontSize: fontSizes.h5, marginBottom: 5 }}>
                         {errorPassword}</Text>
                 </View>
+                {/*Full Name */}
+                <View style={{
+                    marginHorizontal: 20,
+                }}>
+                    <Text style={{
+                        color: colors.primary,
+                        fontSizes: fontSizes.h5
+                    }}>Full Name: </Text>
+                    <TextInput
+                        onChangeText={(text) => {setDisplayName(text)}}
+                        style={{
+                            color: 'black',
+                        }}
+                        placeholder="Nguyen Van A"
+                        value={displayName}
+                        placeholderTextColor={colors.placehoder}
+                    />
+                    <View style={{ height: 1, backgroundColor: colors.primary, marginBottom: 15 }} />
+                    
+                </View>
 
                 {/*Button register */}
                 {keyboardIsShow == false && <View style={{
-                    marginTop:15
+                    marginTop: 15
                 }}>
                     <TouchableOpacity
                         disabled={!isValidationOk()}
                         onPress={() => {
-                            Alert.alert(`Email: ${email}`, `Password: ${password}`)
+                            
+                            createUserWithEmailAndPassword(auth, email, password)
+                                .then((userCredential) => {
+                                    
+                                    const user = userCredential.user;
+                                    sendEmailVerification(user).then(() => {
+                                        console.log('Email verification sent!')
+                                    })
+                                    firebaseDatabaseSet(firebaseDatabaseRef(
+                                        firebaseDatabase,
+                                        `users/${user.uid}`), {
+                                        email: user.email,
+                                        emailVerified: user.emailVerified,
+                                        accessToken: user.accessToken,
+                                        userId: user.uid,
+                                        
+                                    })
+                                    
+                                    
+                                    navigate('UITab')
+                                })
+                                .catch((error) => {
+                                    const errorCode = error.code;
+                                    const errorMessage = error.message;
+                                    // ..
+                                });
                         }}
                         style={{
                             backgroundColor: isValidationOk() ? colors.primary : colors.disabled,
@@ -177,7 +245,7 @@ function RegisterScreen() {
 
             {/* Footer */}
             {keyboardIsShow == false && <View style={{
-                flex: 20,
+                flex: 15,
             }}>
                 <View style={{
                     height: 40,
@@ -210,5 +278,7 @@ function RegisterScreen() {
         </KeyboardAvoidingView>
     )
 }
+import { formToJSON } from "axios";
+import { set } from "firebase/database";
 
 export default RegisterScreen

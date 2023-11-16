@@ -5,6 +5,14 @@ import { images, icons, fontSizes, colors } from "../theme";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { UIButton } from '../component';
 import { isValidationEmail, isValiatePassword } from "../utilies/Validation";
+import {
+    auth,
+    onAuthStateChanged,
+    firebaseDatabaseRef,
+    firebaseDatabaseSet,
+    firebaseDatabase,
+    signInWithEmailAndPassword
+} from '../firebase/firebase'
 
 function LoginScreen(props) {
     const [keyboardIsShow, setKeyboardIsShow] = useState(false);
@@ -12,8 +20,8 @@ function LoginScreen(props) {
     const [errorEmail, setErrorEmail] = useState('');
     const [errorPassword, setErrorPassword] = useState('');
     //states to store email/password
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('khanhnv@gmail.com');
+    const [password, setPassword] = useState('123456abc');
     const isValidationOk = () => email.length > 0 && password.length > 0
         && isValidationEmail(email) == true && isValiatePassword(password) == true
 
@@ -85,6 +93,7 @@ function LoginScreen(props) {
                             color: 'black',
                         }}
                         placeholder="example@gmail.com"
+                        value={email}
                         placeholderTextColor={colors.placehoder}
                     />
                     <View style={{ height: 1, backgroundColor: colors.primary, marginBottom: 15 }} />
@@ -107,6 +116,7 @@ function LoginScreen(props) {
                         }}
                         secureTextEntry={true}
                         placeholder="Enter Password"
+                        value={password}
                         placeholderTextColor={colors.placehoder}
                     />
                     <View style={{ height: 1, backgroundColor: colors.primary }} />
@@ -122,7 +132,19 @@ function LoginScreen(props) {
                 <TouchableOpacity
                     disabled={!isValidationOk()}
                     onPress={() => {
-                        navigate('UITab')
+                        signInWithEmailAndPassword(auth, email, password)
+                            .then((userCredential) => {
+
+                                const user = userCredential.user;
+                                navigate('UITab')
+                            })
+                            .catch((error) => {
+                                debugger
+                                const errorCode = error.code;
+                                const errorMessage = error.message;
+                                // ..
+                            });
+                        
                     }}
                     style={{
                         backgroundColor: isValidationOk() ? colors.primary : colors.disabled,
@@ -139,7 +161,7 @@ function LoginScreen(props) {
                     }}>Login</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={()=> {
+                    onPress={() => {
                         navigate('Register')
                     }}
                     style={{
