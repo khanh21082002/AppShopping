@@ -11,5 +11,6 @@ export default{
     messenger : 'rgba(0, 255, 0, 0.1)',
     repley: '#33FFFF',
     white : '#fff',
-    grey: '#EEEEEE'
+    grey: '#EEEEEE',
+    black: '#000000',
 }

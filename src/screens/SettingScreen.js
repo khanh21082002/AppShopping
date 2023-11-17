@@ -11,17 +11,25 @@ import {
     firebaseDatabaseSet
 } from "../firebase/firebase"
 
-import {backgroundColorState} from "./../recoid/index"
+import {backgroundColorState, textColorState} from "./../recoid/index"
+import { set } from "firebase/database";
 
 function SettingScreen(porps) {
-    const [isEnabledLockApp, setIsEnabledLockApp] = useState(true);
-    const [isUseFingerPrint, setIsUseFingerPrint] = useState(true);
-    const [isEnabledChangePassword, setIsEnabledChangePassword] = useState(true);
+    const [isEnabledLockApp, setIsEnabledLockApp] = useState(false);
+    const [isUseFingerPrint, setIsUseFingerPrint] = useState(false);
+    const [isEnabledChangePassword, setIsEnabledChangePassword] = useState(false);
     const [backgroundColor, setBackgroundColor] = useRecoilState(backgroundColorState);
+    const [textColor, setTextColor] = useRecoilState(textColorState);
 
     const { navigation, route } = porps
     //function of navigate to/back
     const { navigate, goBack } = navigation
+
+    const handleToggleSwitch = (value) => {
+        setIsEnabledLockApp(value);
+        setBackgroundColor(value ? colors.black : colors.white);
+        setTextColor(value ? colors.white : colors.black);
+      };
     return <View style={{
         flex: 1,
         backgroundColor: 'white'
@@ -132,7 +140,7 @@ function SettingScreen(porps) {
                     trackColor={{ false: '#767577', true: colors.primary }}
                     thumbColor={isEnabledLockApp ? colors.primary : colors.disabled}
                     ios_backgroundColor="#3e3e3e"
-                    onValueChange={(value) => setIsEnabledLockApp(value)}
+                    onValueChange={handleToggleSwitch}
                     value={isEnabledLockApp}
                     style={{
                         marginEnd: 10,

@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState, useRef } from "react";
+import { useRecoilValue } from 'recoil';
 import { Image, ImageBackground, Text, View, TouchableOpacity, Alert, TextInput, KeyboardAvoidingView, Platform, Keyboard, FlatList, Modal, Button } from "react-native";
 import { images, icons, fontSizes, colors } from "../../theme";
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -18,6 +19,8 @@ import {
 
 } from "../../firebase/firebase";
 import { set } from "firebase/database";
+
+import { backgroundColorState, textColorState } from './../../recoid/index';
 
 
 function MessengerScreen(props) {
@@ -39,6 +42,9 @@ function MessengerScreen(props) {
     const [selectedChat, setSelectedChat] = useState("");
 
     const [isHidden, setIsHidden] = useState(false);
+
+    const backgroundColor = useRecoilValue(backgroundColorState);
+    const textColor = useRecoilValue(textColorState);
 
     useEffect(() => {
         onValue(firebaseDatabaseRef(firebaseDatabase, 'messages'), async snapshot => {
@@ -99,7 +105,7 @@ function MessengerScreen(props) {
     };
 
 
-    return <View style={{ backgroundColor: 'white', flex: 1 }}>
+    return <View style={{ backgroundColor: backgroundColor, flex: 1 }}>
         <UIHeader
             title={name}
             leftIcon="chevron-left"
@@ -134,10 +140,13 @@ function MessengerScreen(props) {
 
 
         <View style={{
-            height: 50,
+            backgroundColor: colors.grey,
+            height: 40,
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
+            borderRadius: 10,
+            marginBottom: 5,
 
         }}>
             <TextInput
@@ -146,7 +155,7 @@ function MessengerScreen(props) {
                     setTypedText(typedText);
                 }}
                 style={{
-                    color: 'black',
+                    color: textColor,
                     paddingStart: 10,
                 }}
 
@@ -157,23 +166,15 @@ function MessengerScreen(props) {
 
 
             <TouchableOpacity
-
                 onPress={async () => {
                     if (typedText.trim().length == 0) {
                         return;
                     };
-
-
-
                     let stringUser = await AsyncStorage.getItem('user');
                     let myUserId = JSON.parse(stringUser).uid;
                     let myFriendUserId = props.route.params.users.userId;
-
-
                     let newKeyMessenger = new Date().getTime();
                     //save data to firebase
-
-
                     let newMessengerObject = {
                         //fake
                         url: 'https://randomuser.me/api/portraits/men/70.jpg',
@@ -182,7 +183,7 @@ function MessengerScreen(props) {
                         timetamp: newKeyMessenger,
                         userReceiver: myFriendUserId
                     };
-                    
+
                     let newChatObject = {
                         isHidden: false,
                         userSender: myUserId,
@@ -200,7 +201,7 @@ function MessengerScreen(props) {
                         firebaseDatabaseRef(firebaseDatabase, messagePath),
                         newMessengerObject
                     ).then(() => {
-                        setTypedText('');                        
+                        setTypedText('');
                     })
 
                     // Lưu chat
@@ -215,10 +216,8 @@ function MessengerScreen(props) {
                     name="paper-plane"
                     style={{
                         padding: 10,
-
-
                     }}
-                    size={25}
+                    size={20}
                     color={colors.primary}
 
                 />

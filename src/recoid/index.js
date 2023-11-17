@@ -1,6 +1,7 @@
 import React from "react";
-import {backgroundColorState} from "./BackGround";
+import {backgroundColorState , textColorState} from "./BackGround";
 
 export {
-    backgroundColorState
+    backgroundColorState,
+    textColorState
 }

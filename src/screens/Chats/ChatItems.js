@@ -1,9 +1,11 @@
 
 import React, { useEffect, useState } from "react";
+import { useRecoilValue } from 'recoil';
 import { Image, ImageBackground, Text, View, TouchableOpacity, Alert, TextInput, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
 import { images, icons, fontSizes, colors } from "../../theme";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { UIButton } from '../../component';
+import { backgroundColorState , textColorState } from './../../recoid/index';
 
 
 // function _getColorFromStatus(status) {
@@ -22,9 +24,11 @@ function ChatItems(props) {
         key,
     } = props.user
     const { onPress, onLongPress } = props
+    const backgroundColor = useRecoilValue(backgroundColorState);
+    const textColor = useRecoilValue(textColorState);
 
     return <View style={{
-        backgroundColor: 'white',
+        backgroundColor: backgroundColor,
         margin: 5,
         borderRadius: 5,
         height: 80,
@@ -90,19 +94,19 @@ function ChatItems(props) {
                     }}>
 
                         <Text style={{
-                            color: 'black',
+                            color: textColor,
                             fontSize: fontSizes.h5,
                             fontWeight: 'bold'
                         }}>{name}</Text>
 
                         <Text style={{
-                            color: 'black',
+                            color: textColor,
                             fontSize: fontSizes.h5,
                         }}>{lastMessage}</Text>
                     </View>
                     <View style={{ marginBottom: 30 }}>
                         <Text style={{
-                            color: colors.disabled,
+                            color: textColor,
                             fontSize: fontSizes.h6,
                             marginRight: 8
 

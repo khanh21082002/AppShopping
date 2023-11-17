@@ -4,6 +4,8 @@ import { Image, ImageBackground, Text, View, TouchableOpacity, Alert, TextInput,
 import { images, icons, fontSizes, colors } from "../../theme";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { UIButton } from '../../component';
+import { useRecoilValue } from "recoil";
+import { backgroundColorState , textColorState } from './../../recoid/index';
 
 // function _getColorFromStatus(status) {
 //     return status.toLowerCase().trim() === "opening soon" ? colors.openingSoon :
@@ -20,6 +22,8 @@ const screenHeight = Dimensions.get('window').height;
 function MessengerItems(props) {
     const { onPress , onDelete } = props
     const { url, isSender, timetamp, messenger, showUrl } = props.item
+    const textColor = useRecoilValue(textColorState);
+
     
 
     return (isSender == true ? <TouchableOpacity
@@ -57,7 +61,7 @@ function MessengerItems(props) {
         }}>
             <View>
                 <Text style={{
-                    color: 'black',
+                    color: 'white',
                     fontSize: fontSizes.h5,
                     paddingVertical: 5,
                     paddingHorizontal: 7,
@@ -85,7 +89,7 @@ function MessengerItems(props) {
 
         }}>
             <Text style={{
-                color: 'black',
+                color: colors.backgroundColor,
                 fontSize: fontSizes.h5,
                 paddingVertical: 5,
                 paddingHorizontal: 7,

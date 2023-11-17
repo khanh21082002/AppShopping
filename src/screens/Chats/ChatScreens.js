@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useRecoilValue } from 'recoil';
 import { Image, ImageBackground, Text, View, TouchableOpacity, Alert, TextInput, KeyboardAvoidingView, Platform, Keyboard, FlatList, Animated, StyleSheet } from "react-native";
 import { images, icons, fontSizes, colors } from "../../theme";
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -17,6 +18,7 @@ import {
     child,
     get, onValue
 } from "../../firebase/firebase";
+import { backgroundColorState } from './../../recoid/index';
 
 function ChatScreens(props) {
     const [users, setUsers] = useState([]);
@@ -26,6 +28,8 @@ function ChatScreens(props) {
     const [chatHistory, setChatHistory] = useState([]);
     const [lastMessages, setLastMessages] = useState('');
     const [searchText, setSearchText] = useState('');
+
+    const backgroundColor = useRecoilValue(backgroundColorState);
 
     const fillterList = (text) => chatUsers.filter(eachUsers => eachUsers.name.toLowerCase().includes(searchText.toLowerCase()))
     useEffect(() => {
@@ -108,7 +112,7 @@ function ChatScreens(props) {
     };
 
     return (
-        <View style={{ backgroundColor: 'white', flex: 1 }}>
+        <View style={{ backgroundColor: backgroundColor, flex: 1 }}>
             <UIHeader
                 title="Notifications"
                 leftIcon="chevron-left"
