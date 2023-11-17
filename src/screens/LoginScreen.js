@@ -5,15 +5,23 @@ import { images, icons, fontSizes, colors } from "../theme";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { UIButton } from '../component';
 import { isValidationEmail, isValiatePassword } from "../utilies/Validation";
+import {
+    auth,
+    onAuthStateChanged,
+    firebaseDatabaseRef,
+    firebaseDatabaseSet,
+    firebaseDatabase,
+    signInWithEmailAndPassword
+} from '../firebase/firebase'
 
-function LoginScreen() {
+function LoginScreen(props) {
     const [keyboardIsShow, setKeyboardIsShow] = useState(false);
     //states for validating
     const [errorEmail, setErrorEmail] = useState('');
     const [errorPassword, setErrorPassword] = useState('');
     //states to store email/password
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('khanhnv@gmail.com');
+    const [password, setPassword] = useState('123456abc');
     const isValidationOk = () => email.length > 0 && password.length > 0
         && isValidationEmail(email) == true && isValiatePassword(password) == true
 
@@ -25,6 +33,10 @@ function LoginScreen() {
             setKeyboardIsShow(false);
         });
     })
+
+    const { navigation, route } = props
+    //function of navigate to/back
+    const { navigate, goBack } = navigation
 
     return (
         <KeyboardAvoidingView
@@ -81,6 +93,7 @@ function LoginScreen() {
                             color: 'black',
                         }}
                         placeholder="example@gmail.com"
+                        value={email}
                         placeholderTextColor={colors.placehoder}
                     />
                     <View style={{ height: 1, backgroundColor: colors.primary, marginBottom: 15 }} />
@@ -103,6 +116,7 @@ function LoginScreen() {
                         }}
                         secureTextEntry={true}
                         placeholder="Enter Password"
+                        value={password}
                         placeholderTextColor={colors.placehoder}
                     />
                     <View style={{ height: 1, backgroundColor: colors.primary }} />
@@ -116,9 +130,21 @@ function LoginScreen() {
                 flex: 15
             }}>
                 <TouchableOpacity
-                    disabled = {!isValidationOk()}
+                    disabled={!isValidationOk()}
                     onPress={() => {
-                        Alert.alert(`Email: ${email}`, `Password: ${password}`)
+                        signInWithEmailAndPassword(auth, email, password)
+                            .then((userCredential) => {
+
+                                const user = userCredential.user;
+                                navigate('UITab')
+                            })
+                            .catch((error) => {
+                                debugger
+                                const errorCode = error.code;
+                                const errorMessage = error.message;
+                                // ..
+                            });
+                        
                     }}
                     style={{
                         backgroundColor: isValidationOk() ? colors.primary : colors.disabled,
@@ -134,10 +160,14 @@ function LoginScreen() {
                         color: 'white',
                     }}>Login</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{
-                    padding: 5,
-                    alignSelf: 'center',
-                }}>
+                <TouchableOpacity
+                    onPress={() => {
+                        navigate('Register')
+                    }}
+                    style={{
+                        padding: 5,
+                        alignSelf: 'center',
+                    }}>
                     <Text style={{
                         padding: 10,
                         fontSize: fontSizes.h5,

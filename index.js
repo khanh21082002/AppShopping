@@ -4,6 +4,6 @@
 
 import {AppRegistry} from 'react-native';
 import {name as appName} from './app.json';
-import {Welcome , Login , Register ,FootList} from './src/screens/index';
 
-AppRegistry.registerComponent(appName, () => FootList);
+import App from "../ShoppingApp/src/navigation/App";
+AppRegistry.registerComponent(appName, () => App);
