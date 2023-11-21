@@ -61,7 +61,7 @@ function MessengerItems(props) {
         }}>
             <View>
                 <Text style={{
-                    color: 'white',
+                    color: colors.black,
                     fontSize: fontSizes.h5,
                     paddingVertical: 5,
                     paddingHorizontal: 7,

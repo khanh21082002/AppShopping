@@ -26,10 +26,27 @@ function ChatScreens(props) {
     const [isDelete, setIsDelete] = useState(false);
     const [chatUsers, setChatUsers] = useState([]);
     const [chatHistory, setChatHistory] = useState([]);
-    const [lastMessages, setLastMessages] = useState('');
     const [searchText, setSearchText] = useState('');
 
     const backgroundColor = useRecoilValue(backgroundColorState);
+
+    //get last message
+    // const getLastMessage = async (myUserId, otherUserId) => {
+    //     debugger
+    //     const snapshot = await get(child(firebaseDatabaseRef(firebaseDatabase, 'messages')));
+    //     if (snapshot.exists()) {
+    //         const snapshotObject = snapshot.val();
+    //         const messages = Object.keys(snapshotObject)
+    //             .fill(item => item.includes(myUserId) && item.includes(otherUserId))
+    //             .sort((item1, item2) => item1.timestamp - item2.timestamp);
+    //         const lastMessageKey = messages.length > 0 ? messages[messages.length - 1] : null;
+    //         return snapshotObject[lastMessageKey];
+    //     } else {
+    //         console.log('No data in messages node');
+    //         return null;
+    //     }
+    //     debugger
+    // };
 
     const fillterList = (text) => chatUsers.filter(eachUsers => eachUsers.name.toLowerCase().includes(searchText.toLowerCase()))
     useEffect(() => {
@@ -38,52 +55,45 @@ function ChatScreens(props) {
             const myUserId = JSON.parse(stringUser).uid;
     
             onValue(firebaseDatabaseRef(firebaseDatabase, 'chat'), async (chatSnapshot) => {
+               
                 if (chatSnapshot.exists()) {
                     const chatData = chatSnapshot.val();
                     const chatUsersArray = [];
-    
+                    const lastMessage = [];
+                    
                     for (const chatKey in chatData) {
                         if (chatKey.includes(myUserId)) {
                             const chatInfo = chatData[chatKey];
                             const chatKeyParts = chatKey.split('-');
                             const otherUserId = chatKeyParts.find(userId => userId !== myUserId);
-    
+
+                            
+                           
                             if (!chatInfo.isHidden) {
-                                // Lấy thông tin người dùng từ cơ sở dữ liệu
                                 const userSnapshot = await get(child(firebaseDatabaseRef(firebaseDatabase, 'users'), otherUserId));
                                 if (userSnapshot.exists()) {
                                     const userObject = userSnapshot.val();
                                     chatUsersArray.push({
-                                        url: 'https://randomuser.me/api/portraits/men/60.jpg',
+                                        url: 'https://randomuser.me/api/portraits/men/50.jpg',
                                         name: userObject.email,
                                         email: userObject.email,
                                         accessToken: userObject.accessToken,
                                         numberUnreadMessages: 0,
                                         userId: otherUserId,
+                                        lastMessage: chatInfo.lastMessage,
                                     });
+                                   
                                 }
-                                
                                
-                            }
-                           
-                           
-                            // Lấy tin nhắn cuối cùng từ cơ sở dữ liệu
-                            // onValue(child(firebaseDatabaseRef(firebaseDatabase, 'messages')), async (messageSnapshot) => {
-                            //     if (messageSnapshot.exists()) {
-                            //         let snapshotObject =await messageSnapshot.val();
-                            //         let messages = Object.keys(snapshotObject)
-                            //             .map(eachKey => snapshotObject[eachKey])
-                            //             .sort((item1, item2) => item1.timetamp - item2.timetamp);
-
-                            //         // Kiểm tra xem có tin nhắn hay không trước khi gán giá trị
-                            //         //setLastMessages(messages.length > 0 ? messages[messages.length - 1] : null);
-                            //     }
-                            // });
+                               
+                            }   
                             
                         }
                     }   
                     setChatUsers(chatUsersArray);
+                    
                 }
+                
             });
         }
     
@@ -186,8 +196,6 @@ function ChatScreens(props) {
                             )
                         }}
                         user={item}
-                        lastMessage={lastMessages}
-
                         key={item.name}
                     />
                 )}

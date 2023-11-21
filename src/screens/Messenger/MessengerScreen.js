@@ -155,7 +155,7 @@ function MessengerScreen(props) {
                     setTypedText(typedText);
                 }}
                 style={{
-                    color: textColor,
+                    color: colors.black,
                     paddingStart: 10,
                 }}
 
@@ -188,6 +188,8 @@ function MessengerScreen(props) {
                         isHidden: false,
                         userSender: myUserId,
                         userReceiver: myFriendUserId,
+                        lastMessage: typedText,
+                        timetamp: newKeyMessenger
                     }
                     scrollToBottom();
                     Keyboard.dismiss();
